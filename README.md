@@ -181,7 +181,7 @@ for key in ['breastmnist', 'pneumoniamnist']:
 After a run (Colab or local), copy curated results (not entire `runs/`) to:
 
 ```
-results/week1 to 10/<dataset_key>/<your_name>/
+results/week1 to 10/<your_name>/
   ├─ test_metrics.json
   ├─ reliability.png
   ├─ screenshot_env.png
