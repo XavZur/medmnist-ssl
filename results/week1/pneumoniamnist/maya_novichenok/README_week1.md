@@ -1,22 +1,19 @@
-# Week 1
+Week 1
 
-Dataset: pneumoniamnist
-Model: smallcnn
-Config: epochs=5, batch_size=128, seed=42
+Dataset: pneumoniamnist Model: resnet18 --finetune head Config: epochs=5, batch_size=128, seed=42
 
-**Issue & Fix**
+Issue & Fix
 
-RuntimeError: 0D or 1D target tensor expected, multi-target not supported
+Issue: During training, the run failed with "RuntimeError: 0D or 1D target tensor expected, multi-target not supported." This happened because the dataset labels had shape [batch_size, 1], while CrossEntropyLoss expects a 1-D tensor of class indices [batch_size].
 
-This happened because the dataset labels had shape **[batch_size, 1]**,  
-but **CrossEntropyLoss** requires a 1-D tensor of shape **[batch_size]**.
+Solution: I fixed this by squeezing the label dimension before computing the loss:
 
-### **Fix**
-I resolved this by **squeezing the label dimension** before computing loss.
+y = y.squeeze(1).long() loss = criterion(logits, y)
 
-**Results of TEST:**
+This converts [B, 1] → [B] and allows CrossEntropyLoss to work correctly.
 
-Acc:0.0.6218
-AUROC:0.6494
-ECE:0.11093095861948454
+Results of TEST:
 
+Acc:0.7628 AUROC:0.8252 ECE:0.2389
+
+Note: The model reached moderate performance (Acc ≈ 0.76, AUROC ≈ 0.83). AUROC > Acc indicates that the classifier ranks positive samples fairly well, but threshold calibration could improve accuracy.
