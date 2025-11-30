@@ -40,4 +40,4 @@ Note: I haven’t tried temperature scaling yet b/c of time constraints, but I�
 
 **Summary:**  
 PneumoniaMNIST isn’t balanced, differentiation is difficult with low resolution. resnet18 performs better than smallcnn, 
-but still is overconfident with high ece. Next, I want to try some calibration tricks (TS).
+but still is overconfident with high ece. Next, I want to try some calibration method like TS.
