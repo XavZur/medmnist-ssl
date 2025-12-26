@@ -25,7 +25,7 @@
 | ResNet-18 (head-only)      | 0.7628   | 0.8371     | 0.1285     |
 | ResNet-18 (all, basic)     | 0.8670   | 0.9546     | 0.1306     |
 
-The model reaches perfect accuracy on train set while it performs at 87% accuracy on test set which indicates mild overfitting. Such decrease in performance are noticeable in AUROC and ECE too. It still significantly outperforms the head-only model on the test set and is thus preferred in practice. Augmentations below show a decrease in overfitting.
+The model reaches perfect accuracy on train set while it performs at 87% accuracy on test set which indicates mild overfitting. Such decrease in performance are noticeable in AUROC and ECE too, indicating overfitting. It still significantly outperforms the head-only model on the test set and is thus preferred in practice. Augmentations below show a decrease in overfitting.
 
 ---
 
@@ -53,10 +53,14 @@ Reference point will be resnet-all-basic metrics. Will only note notable increas
 
 **Finetune-all:** (basic) Showed strong learning capacity. The model achieved near-perfect train and val accuracy with excellent AUROC (~0.99), implying the backbone successfully adapted to the training and val set. Train loss and ECE converged to zero while val did not, suggesting mild level of overfitting to the train set, though overall performance remains relatively high. The spikes and difference in smoothness of the growth curves reinforce overfitting claim (train curves remain smooth, val curves contain spikes).
 
-**Augmentation comments: TO-DO**
+**Finetune-all + augD**: Clear smoothness of the validation growth curves with much less and smaller spikes. Fast learning rate and lower convergence for accuracy and ECE. Overfitting her seems much less defined. 
+
+Augmentation D seems to have heavily stabilized learning rate and decrease the level of overfitting.
 
 ## 5. Takeaways for SSL (Weeks 4-6)
 
-**TO-DO**
+**Reference Setup**: I will use 'resnet18-all-AugD' as the reference for the next weeks. It achieves the best test results and shows stable training with reasonable generalization.
 
-(although I think my week2 ece was incorrect since I consistently got much lower results when rerunning)
+**Surprises**: 
+
+Note: I think my week2 ECE was incorrect since I consistently got much lower results when rerunning with torchmetrics.BinaryCalibrationError().
