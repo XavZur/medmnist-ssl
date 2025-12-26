@@ -4,7 +4,7 @@
 
 * **Dataset:** PneumoniaMNIST (28x28 chest X-ray images of pneumonia cases and normal cases)
 * **Class balance:** Significant class imbalance (around 3x more pneumonia cases than normal ones)
-*  **Transforms:** Used T.Resize((64, 64)) and T.ToTensor() before week 3.
+*  **Transforms:** Used T.Resize((64, 64)), T.ToTensor() and Normalize() before week 3.
 
 # 2. Head-only vs Finetune-all 
 
