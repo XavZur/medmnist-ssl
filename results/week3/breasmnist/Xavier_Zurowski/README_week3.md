@@ -11,10 +11,10 @@
 # **Head-Only vs Finetune-All**
 | Model Variant            | Finetune | Train Acc | Val Acc | Test Acc | Test AUROC | Test ECE | Notes                           |
 |--------------------------|----------|-----------|---------|----------|------------|----------|--------------------------------|
-| ResNet-18 (head-only)    | head     | 0.7399    | 0.7435 | 0.7243   | 0.5242     | 0.0977   | Frozen backbone limits learning|
+| ResNet-18 (head-only)    | head     | 0.7344    | 0.7307 | 0.7307   | 0.4392     | 0.1487   | Frozen backbone limits learning|
 | ResNet-18 (all, basic)   | all     | 1.0000    | 0.9102  | 0.8461   | 0.9108    | 0.3204   | Mild overfitting, strong adaptation|
 
-* Head-only training performs poorly, with AUROC near random and a confusion matrix predicting almost exclusively the majority class.
+* Head-only training performs extremely poorly, collapsing to always predicting the majority class, hence an accuracy of 0.7308, a balanced accuracy of 0.5, zero malignant recall, and a confusion matrix with no malignant predictions. Despite reasonable accuracy, the AUROC of 0.439 and PR-AUC of 0.23 indicate that the model fails to rank malignant cases above benign ones and learns no meaningful discriminative features. 
 * Allowing Finetune-all substantially improves performance. AUROC jumps to 0.91 demonstrating that the model can now differentiate classes.
 * Training accuracy reaches 100%, indicating mild overfitting, though test accuracy does remain relatively high at 84%.
 
