@@ -745,164 +745,283 @@ Each of these tasks should have **1–2 owners** in `reports/task_board_week5_7.
 
 ---
 
-### Week 5 — Linear Probe & Label Efficiency
+## 4) Weeks 5–7 — Two-Week Sprint (Teamwork + Individual Tasks + References)
 
-> **Theme:** "How many labels do we really need?"
+> **Theme:** “From SSL to decisions.” We compress Weeks **5–7** into a **2-week sprint**. We keep a **shared core** so results are comparable, but we also assign **dataset-specific extra tasks** via a Task Board to avoid duplicated work.
 
-#### 5.1 Shared core (per person, primary dataset)
+### 4.0 Sprint timeline (2 weeks total)
 
-1. **Freeze SSL encoder** trained in Week 4.
-2. Train a **linear classifier** on top of the frozen features with:
+* **Sprint Week 1 (Probe + Fine-tune + Calibration)**
 
-   * 5% labels
-   * 10% labels (optionally 1% if you have time).
-3. Evaluate on full **Val/Test** sets (unchanged).
-4. Compare against:
+  * Linear probe with limited labels (**label efficiency**)
+  * SSL fine-tuning (small LR)
+  * Calibration evaluation (**ECE + reliability diagram**)
 
-   * Supervised-only ResNet baseline from Week 3.
-   * (Optional) ImageNet-pretrained backbone baseline.
+* **Sprint Week 2 (Threshold + ROC/PR + Error Analysis)**
 
-**Expected core artifacts:**
+  * Choose operating point(s) (**threshold selection**)
+  * ROC / PR curves
+  * High-confidence errors (FP/FN) + short qualitative notes
+
+> **Important:** Starting from Week 5, we provide **pseudocode + required outputs**, but **not full starter code**. You are expected to implement the details by reusing your Week 3–4 pipeline.
+
+---
+
+### 4.1 Shared Core (everyone must do this on their primary dataset)
+
+Each person completes the **core** on their **primary dataset** so we can compare Breast vs Pneumonia cleanly.
+
+**Core deliverables (Sprint Week 1):**
+
+1. **Label fractions:** run at least **5% and 10%** labels
+2. **Linear probe:** freeze SSL encoder → train linear head
+3. **Fine-tune:** unfreeze SSL encoder → small LR fine-tune (at least at **10%**)
+4. **Calibration:** compute **ECE** + at least **one reliability diagram** (recommended: for the fine-tuned SSL model)
+5. **Comparison table:** supervised baseline (Week 3 best) vs SSL probe vs SSL finetune (**Acc/AUROC/ECE**)
+
+**Core deliverables (Sprint Week 2):**
+
+1. **ROC curve** + **PR curve** (positive class)
+2. **Operating point:** pick a threshold using the **validation** set (e.g., target **TPR≈0.90** or **FPR≈0.10**) and report metrics at that operating point
+3. **High-confidence error gallery:** ~5 FP + ~5 FN with predicted probability and 1-line commentary
+
+---
+
+### 4.2 Dataset-specific extra tasks (Weeks 5–7)
+
+To balance workloads and avoid duplication, extra tasks are split by dataset. **Everyone signs up for 1–2 extra tasks** via the Task Board:
+
+* File: `reports/task_board_week5_7.md`
+* Each task has:
+
+  * **Owner 1 (Lead):** produces final artifacts + short writeup
+  * **Owner 2 (Reviewer/Runner):** sanity checks results, helps reproduce/re-run, reviews interpretation
+
+> If team sizes are imbalanced (e.g., Pneumonia has more members), members of the larger team should take **at least one helper task** on the smaller dataset.
+
+#### 4.2.1 PneumoniaMNIST extra tasks (P-tasks)
+
+Focus: **operating points, calibration, robustness, clinical trade-offs.**
+
+* **P1 — Temperature scaling vs no calibration (ECE)**
+
+  * Fit temperature on **val logits**, report ECE before/after; AUROC should stay ~same.
+  * **DoD:** `P1_temp_scaling_table.md` + `P1_reliability_before.png` + `P1_reliability_after.png`.
+
+* **P2 — Operating points: choose thresholds for target TPR/FPR**
+
+  * Example targets: TPR=0.90, FPR=0.10; pick thresholds on val, report test metrics.
+  * **DoD:** `P2_operating_points.md` + confusion matrices at each point.
+
+* **P3 — PR vs ROC interpretation under imbalance**
+
+  * Compare PR-AUC and ROC-AUC; write 8–12 lines interpreting why PR may be more informative.
+  * **DoD:** `P3_pr_vs_roc_note.md` + `pr_curve.png` + `roc_curve.png`.
+
+* **P4 — High-confidence error taxonomy (FP vs FN)**
+
+  * Collect top-5 FP and top-5 FN by confidence; categorize (e.g., low-contrast, borderline, artifacts).
+  * **DoD:** `P4_error_gallery.png` + `P4_error_notes.md`.
+
+* **P5 — Mini robustness shift (tiny, cheap)**
+
+  * Evaluate model under a mild perturbation (e.g., +Gaussian noise, small contrast shift, mild crop) and report ∆Acc/∆AUROC/∆ECE.
+  * **DoD:** `P5_robustness_table.md` + 1 plot comparing metrics.
+
+* **P6 (optional) — Calibration under shift**
+
+  * Repeat ECE/reliability after the perturbation and discuss calibration drift.
+  * **DoD:** `P6_shift_reliability.png` + 6–10 line discussion.
+
+#### 4.2.2 BreastMNIST extra tasks (B-tasks)
+
+Focus: **label efficiency, variability across seeds, augmentation sensitivity, representation quality.**
+
+* **B1 — Label fraction grid + repeats (variance matters)**
+
+  * Run fractions: 1/2/5/10/20% with **2–3 seeds** for linear probe; report mean±std.
+  * **DoD:** `B1_label_grid.csv` + `B1_label_efficiency_plot.png` + short interpretation.
+
+* **B2 — Augmentation ablation for SSL (representation quality)**
+
+  * Compare 2 SSL augmentation configs (mild vs slightly stronger) and evaluate via linear probe (e.g., 10%).
+  * **DoD:** `B2_aug_ablation_table.md` + 1 figure showing probe performance.
+
+* **B3 — SSL vs ImageNet-init vs supervised-only (small-data focus)**
+
+  * Compare three regimes at 10% labels: (i) SSL-pretrained, (ii) ImageNet init, (iii) supervised-from-scratch.
+  * **DoD:** `B3_comparison_table.md` + 6–10 line discussion.
+
+* **B4 — Representation visualization (optional)**
+
+  * Use UMAP/t-SNE on encoder features (val or train subset) and comment on class separation.
+  * **DoD:** `B4_umap.png` (or `B4_tsne.png`) + `B4_notes.md`.
+
+* **B5 — Hard-case error patterns**
+
+  * For high-confidence errors, identify recurring failure modes (speckle noise, weak boundaries, tiny lesions).
+  * **DoD:** `B5_error_gallery.png` + bullets describing patterns and possible fixes.
+
+---
+
+### 4.3 References requirement (new)
+
+From Week 5 onward, tasks involve reading and connecting to relevant references.
+
+**For every extra task you own (Lead), you must:**
+
+1. Find **≥1 relevant reference** (paper, tutorial, or high-quality note) that supports your method/analysis.
+2. Write a short summary (8–12 lines) answering:
+
+   * What is the key idea?
+   * What protocol/metric does it recommend?
+   * How are we using it in our MedMNIST setup?
+3. Save it to:
+
+```text
+reports/references/<task_id>_<shortname>.md
+```
+
+Reviewer adds a short “sanity check” comment (3–5 lines) if possible.
+
+---
+
+### 4.4 Pseudocode pack (what we provide instead of starter code)
+
+We provide **pseudocode** and required outputs, but you implement the code yourself using your Week 3–4 pipeline.
+
+#### 4.4.1 Label fraction sampling (reproducible)
+
+```text
+function make_split_indices(train_dataset, frac, seed):
+    set_seed(seed)
+    y = labels(train_dataset)
+    idx = stratified_sample(y, fraction=frac, seed=seed)
+    save_json(indices_frac={frac}_seed={seed}.json, idx)
+    return idx
+```
+
+#### 4.4.2 Linear probe (freeze encoder)
+
+```text
+function train_linear_probe(ssl_encoder, train_loader_frac, val_loader, cfg):
+    freeze(ssl_encoder)
+    head = Linear(feat_dim -> num_classes)
+    train head with CE loss
+    evaluate on val/test -> acc, auroc, probs
+    save probe_metrics_{frac}.json
+```
+
+#### 4.4.3 Fine-tuning (unfreeze + small LR)
+
+```text
+function finetune(ssl_encoder, head, train_loader_frac, val_loader, cfg):
+    unfreeze(ssl_encoder)
+    set lr_encoder = small_lr, lr_head = larger_lr
+    train encoder+head with CE loss
+    evaluate on val/test -> acc, auroc, probs
+    save finetune_metrics_{frac}.json
+```
+
+#### 4.4.4 Calibration (ECE + reliability)
+
+```text
+function compute_reliability(probs, y, n_bins):
+    for each bin:
+        conf_bin = mean(confidence)
+        acc_bin  = mean(correct)
+        count_bin = size
+    ECE = sum (count_bin/N) * |acc_bin - conf_bin|
+    plot reliability diagram + histogram
+    return ECE
+```
+
+#### 4.4.5 Threshold, ROC/PR, high-confidence errors
+
+```text
+function choose_threshold(scores, y_val, target_metric, target_value):
+    scan thresholds
+    pick t that best matches target
+
+function collect_high_conf_errors(scores, y, t, k):
+    yhat = scores >= t
+    FP = top-k scores among (yhat=1, y=0)
+    FN = bottom-k scores among (yhat=0, y=1)
+    save gallery/table with (image, score, true/pred, note)
+```
+
+---
+
+### 4.5 Expected artifacts and folders (Weeks 5–7)
+
+Use:
 
 ```text
 results/week5/<dataset>/<your_name>/
-  ├─ probe_metrics_5pct.json
-  ├─ probe_metrics_10pct.json
-  ├─ probe_vs_supervised_plot_acc.png
-  ├─ probe_vs_supervised_plot_auroc.png
-  └─ README_week5_core.md
-```
-
-`README_week5_core.md` should contain:
-
-* Small table: label fraction vs Acc / AUROC
-* 3–6 sentences on label efficiency: when does SSL help vs not?
-
-#### 5.2 Extra tasks (PneumoniaMNIST)
-
-Pneumonia owners sign up for tasks like **P1, P2, P4** etc. Example outputs:
-
-* `pneumo_label_grid_P1.csv`, `ece_temp_scaling_P2.json`, `roc_operating_points_P4.png`, etc.
-* Short `README_week5_Px.md` per extra task with key conclusions.
-
-#### 5.3 Extra tasks (BreastMNIST)
-
-Breast owners (and helpers) sign up for **B1/B3** etc. Example outputs:
-
-* `breast_label_grid_B1.csv`, `breast_ssl_aug_ablation_B3.png`, etc.
-* `README_week5_Bx.md` summarizing findings.
-
----
-
-### Week 6 — SSL Fine-tuning & Calibration
-
-> **Theme:** "Does SSL help calibration and not just accuracy?"
-
-#### 6.1 Shared core (per person, primary dataset)
-
-1. **Unfreeze the SSL encoder** and fine-tune with a **small learning rate**.
-2. Compare three models (same dataset, similar label budget):
-
-   * Supervised-only ResNet baseline (Week 3 best config)
-   * SSL **linear probe** (from Week 5)
-   * SSL **fine-tuned** model (this week)
-3. For each model compute:
-
-   * Acc, AUROC, ECE.
-   * At least one **reliability diagram** (preferably for the fine-tuned SSL model).
-
-**Expected core artifacts:**
-
-```text
 results/week6/<dataset>/<your_name>/
-  ├─ metrics_supervised_baseline.json
-  ├─ metrics_ssl_probe.json
-  ├─ metrics_ssl_finetune.json
-  ├─ reliability_supervised.png
-  ├─ reliability_ssl_probe.png       # optional
-  ├─ reliability_ssl_finetune.png
-  └─ README_week6_core.md
+results/week7/<dataset>/<your_name>/
 ```
 
-`README_week6_core.md` should:
+**Minimum expected artifacts:**
 
-* Include a table comparing the three models (Acc, AUROC, ECE).
-* Have 5–8 sentences about calibration differences.
-* Mention if SSL helps **calibration, discrimination, both, or neither**.
+* **Week 5 (Sprint Week 1):**
 
-#### 6.2 Extra tasks (PneumoniaMNIST)
+  * `probe_metrics_5pct.json`, `probe_metrics_10pct.json`
+  * `probe_vs_supervised_plot_acc.png`, `probe_vs_supervised_plot_auroc.png`
+  * `README_week5_core.md`
 
-Possible focus:
+* **Week 6 (Sprint Week 1):**
 
-* More detailed **temperature scaling / Platt scaling** comparisons (P2).
-* Calibration across different **operating points** and thresholding schemes.
-* Small **robustness** experiments (P3) with ECE before/after.
+  * `metrics_supervised_baseline.json`, `metrics_ssl_probe.json`, `metrics_ssl_finetune.json`
+  * `reliability_ssl_finetune.png` (and ECE value recorded)
+  * `README_week6_core.md`
 
-#### 6.3 Extra tasks (BreastMNIST)
+* **Week 7 (Sprint Week 2):**
 
-Possible focus:
+  * `roc_curve.png`, `pr_curve.png`
+  * `operating_point_table.md`
+  * `high_conf_error_gallery.png` (or table inside README)
+  * `README_week7_core.md`
 
-* Compare different **augmentation choices** in SSL pretraining and their effect on calibration.
-* Representation drift: t-SNE/UMAP before vs after fine-tuning.
-
-Each extra task writes a short `README_week6_Px.md` or `README_week6_Bx.md`.
+Extra task artifacts should be named clearly with the task ID, e.g. `P1_temp_scaling_ece.json` or `B1_label_grid_seeds.csv`.
 
 ---
 
-### Week 7 — Thresholds, PR/ROC, Error Analysis
+### Week 8 — Ethics, Limits, and Mini Robustness Test
 
-> **Theme:** "Operating points, not just global metrics."
+#### Recommended Reading for Weeks 5–7 (Calibration, ROC/PR, Thresholds)
 
-#### 7.1 Shared core (per person, primary dataset)
+These are **reference materials** for:
 
-For your **best SSL or supervised model**:
+* calibration & reliability diagrams (Week 6),
 
-1. Choose at least one **operating point**:
+* ROC/PR curves & operating points (Week 7),
 
-   * e.g., threshold chosen to reach **TPR ≈ 0.9** on the validation set, or
-   * threshold chosen to keep **FPR ≈ 0.1**.
-2. Compute and report:
+* understanding how people evaluate models in imbalanced medical settings.
 
-   * Threshold value
-   * Acc, TPR, FPR, Precision, Recall, AUROC at that operating point.
-3. Collect **high-confidence errors** at that threshold:
+* **Calibration – classic paper**
+  Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger, *"On Calibration of Modern Neural Networks"*, ICML 2017.
+  → Defines ECE, reliability diagrams, and temperature scaling; shows modern nets are often over-confident.
 
-   * A few FP and FN with predicted probability, true label, and 1-line comment.
-4. Plot:
+* **Calibration – modern follow-up (optional)**
+  Minderer et al., *"Revisiting the Calibration of Modern Neural Networks"*, NeurIPS / ICLR-era work.
+  → Looks at how calibration behaves in large-scale, modern architectures and under distribution shift.
 
-   * ROC curve (mark your chosen operating point).
-   * PR curve (for the positive class).
+* **ROC basics (very useful for medical ML)**
+  Tom Fawcett, *"An Introduction to ROC Analysis"*, Pattern Recognition Letters, 2006.
+  → Clear tutorial on ROC curves, AUC, and common pitfalls; good background for ROC plots in Week 7.
 
-**Expected core artifacts:**
+* **ROC vs Precision–Recall**
+  Jesse Davis, Mark Goadrich, *"The Relationship Between Precision-Recall and ROC Curves"*, ICML 2006.
+  → Explains why PR curves can be more informative than ROC when classes are imbalanced (like MedMNIST).
 
-```text
-results/week7/<dataset>/<your_name>/
-  ├─ roc_curve.png
-  ├─ pr_curve.png
-  ├─ operating_point_table.md
-  ├─ high_conf_error_gallery.png  # or table in README
-  └─ README_week7_core.md
-```
+* **(Optional) Practical calibration notes**
+  Lecture notes / blog posts that summarize ECE, reliability diagrams, and Platt/temperature scaling in a more applied way.
 
-`README_week7_core.md` should explain:
+When you write Week 6–7 READMEs, you can:
 
-* Why you chose that operating point.
-* Whether it prioritizes **sensitivity** (few FN) or **specificity** (few FP).
-* What the high-confidence errors look like qualitatively.
-
-#### 7.2 Extra tasks (PneumoniaMNIST)
-
-Extra tasks can:
-
-* Study **multiple operating points** (different trade-offs) and plot them.
-* Build richer FP/FN galleries focusing on clinically important mistakes.
-
-#### 7.3 Extra tasks (BreastMNIST)
-
-Extra tasks may:
-
-* Focus on **lesion size / contrast** for the high-confidence errors.
-* Explore how threshold changes might affect **screening vs diagnostic** usage.
+* cite Guo et al. when you mention ECE / temperature scaling;
+* use Fawcett + Davis & Goadrich for ROC/PR plots and threshold discussion.
 
 ---
 
