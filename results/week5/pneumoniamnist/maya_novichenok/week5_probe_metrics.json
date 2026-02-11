@@ -1,0 +1,14 @@
+{
+  "dataset": "pneumoniamnist",
+  "encoder_ckpt": "results/week4/pneumoniamnist/maya_novichenok/ssl_encoder.pt",
+  "probe_5pct": {
+    "n_train": 236,
+    "acc": 0.625,
+    "auroc": 0.7563554678939295
+  },
+  "probe_10pct": {
+    "n_train": 472,
+    "acc": 0.7628205128205128,
+    "auroc": 0.8620206004821389
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "dataset": "pneumoniamnist",
+  "encoder_ckpt": "results/week4/pneumoniamnist/maya_novichenok/ssl_encoder.pt",
+  "baseline_supervised": {
+    "acc": 0.8669871794871795,
+    "auroc": 0.9756300679377603,
+    "ece": null
+  },
+  "ssl_probe_10pct": {
+    "acc": 0.7628205128205128,
+    "auroc": 0.8620206004821389,
+    "ece": null
+  },
+  "ssl_finetune_full": {
+    "acc": 0.8541666666666666,
+    "auroc": 0.952865439403901,
+    "ece": 0.14262129637019175
+  },
+  "notes": "SSL-finetune uses small encoder LR=1e-4, head LR=1e-3. Reliability diagram saved for SSL-finetune."
+}
