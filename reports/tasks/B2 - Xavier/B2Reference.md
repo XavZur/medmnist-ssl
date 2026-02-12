@@ -16,7 +16,7 @@ SimCLR demonstrates that the **strength** of colour distortion and blur directly
 - They report that even moderate distortions (e.g., jitter strength 0.2) still outperform no distortion, but the full recipe gives best results.
 
 **How we use it in MedMNIST:**  
-**Model 2** deliberately **reduces** the strength of colour jitter (`0.2` instead of `0.4`), lowers grayscale probability (`p=0.1`), and narrows blur σ (`[0.1,0.25]`). This creates a controlled comparison: we assess whether medical images (breastmnist) benefit equally from the full SimCLR recipe or require gentler augmentations. Downstream metrics (accuracy, AUROC, ECE) are compared between Model 1 and Model 2.
+**Model 2** deliberately **reduces** the strength of colour jitter (`0.2` instead of `0.4`), lowers grayscale probability (`p=0.1`), and narrows blur (`[0.1,0.25]`). This creates a controlled comparison: we assess whether medical images (breastmnist) benefit equally from the full SimCLR recipe or require gentler augmentations. Downstream metrics (accuracy, AUROC, ECE) are compared between Model 1 and Model 2.
 
 **Note** This is still incomplete, I intend to do at least 2 more models, and do some comparisons with GaussianNoise
 
