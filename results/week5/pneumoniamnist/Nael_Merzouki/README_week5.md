@@ -68,7 +68,7 @@ Increasing labeled data from 234 to 470 samples (+100%) improved validation AURO
 
 **Gap vs Supervised Baseline:**
 
-The 10% probe achieves 92.76% AUROC compared to 94.84% supervised, a gap of 2.08 points. This gap is modest considering the labeled training set is 10× smaller (470 vs 4,708 samples). The SSL encoder successfully transferred learned representations, enabling competitive performance with minimal label investment. The accuracy gap is larger (4.80%), suggesting supervised training benefits more from full diversity in the label distribution.
+The 10% probe achieves 92.76% AUROC compared to 94.84% supervised, a gap of 2.08 points. This gap is modest considering the labeled training set is 10x smaller (470 vs 4,708 samples). The SSL encoder successfully transferred learned representations, enabling competitive performance with minimal label investment. The accuracy gap is larger (4.80%), suggesting supervised training benefits more from full diversity in the label distribution.
 
 **Calibration Behavior:**
 
