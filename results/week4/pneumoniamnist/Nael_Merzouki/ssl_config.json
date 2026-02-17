@@ -1,0 +1,47 @@
+{
+  "method": "simclr-lite",
+  "backbone": "resnet18",
+  "pretrained": true,
+  "feat_dim": 512,
+  "proj_dim": 128,
+  "batch_size": 128,
+  "epochs": 30,
+  "optimizer": "AdamW",
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "tau": 0.2,
+  "seed": 42,
+  "device": "cuda",
+  "dataset": "pneumoniamnist",
+  "augmentations": {
+    "RandomResizedCrop": {
+      "size": 64,
+      "scale": [
+        0.7,
+        1.0
+      ]
+    },
+    "RandomHorizontalFlip": {
+      "p": 0.5
+    },
+    "RandomRotation": {
+      "degrees": 10
+    },
+    "ColorJitter": {
+      "brightness": 0.1,
+      "contrast": 0.1
+    },
+    "Normalize": {
+      "mean": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "std": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    }
+  }
+}
