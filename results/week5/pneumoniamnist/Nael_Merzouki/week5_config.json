@@ -1,7 +1,6 @@
 {
   "week": 5,
   "dataset": "pneumoniamnist",
-  "task": "linear_probing + domain_shift_robustness",
   "shared_core": {
     "label_fractions": [
       0.05,
@@ -13,7 +12,6 @@
     "encoder_dim": 512
   },
   "p3_domain_shift": {
-    "description": "Mini domain shift experiments measuring AUROC/ECE change",
     "perturbations": {
       "gaussian_noise": {
         "std": 0.15
