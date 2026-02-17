@@ -18,7 +18,7 @@
 | **Seed** | 42 |
 | **Device** | CUDA (GPU) |
 
-### Augmentations (Applied to Both Views)
+### Augmentations (applied to both views)
 - RandomResizedCrop (size=64, scale=[0.7, 1.0])
 - RandomHorizontalFlip (p=0.5)
 - RandomRotation (degrees=10)
@@ -41,10 +41,10 @@ By epoch 5, loss drops to ~1.70 (46% reduction). The steepest improvements occur
 | **Final Loss (Epoch 30)** | 1.2654 |
 | **Absolute Loss Reduction** | 1.9015 |
 | **Relative Loss Decrease** | 60.0% |
-| **Loss @ Epoch 5** | ~1.6976 |
-| **Loss @ Epoch 10** | ~1.4970 |
-| **Loss @ Epoch 15** | ~1.3941 |
-| **Loss @ Epoch 20** | ~1.3190 |
+| **Loss at Epoch 5** | ~1.6976 |
+| **Loss at Epoch 10** | ~1.4970 |
+| **Loss at Epoch 15** | ~1.3941 |
+| **Loss at Epoch 20** | ~1.3190 |
 
 **Interpretation:**
 A 60% loss reduction over 30 epochs is substantial and indicates strong optimization. The NT-Xent loss measures the encoder's ability to pull positive pairs (two augmented views of the same image) closer and push negatives farther in the projection space. The final loss of 1.27 reflects healthy separation between similar and dissimilar instances.
@@ -94,5 +94,5 @@ A 60% loss reduction over 30 epochs is substantial and indicates strong optimiza
 - Feat Dim: 512 | Proj Dim: 128
 - Batch Size: 128 | Epochs: 30
 - Optimizer: AdamW (lr=0.001, weight_decay=0.0001)
-- Augmentations: RandomResizedCrop, RandomHorizontalFlip, RandomRotation (±10°), ColorJitter
+- Augmentations: RandomResizedCrop, RandomHorizontalFlip, RandomRotation (+/-10°), ColorJitter
 - Seed: 42
