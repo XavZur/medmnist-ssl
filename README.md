@@ -676,72 +676,29 @@ You are ready to move on to **Week 5** when:
 
 ---
 
-## 4) Weeks 5–7: Shared Core vs Extra Tasks: Shared Core vs Extra Tasks
+#### 4.9 Recommended Reading for Week 4 (SSL Basics)
 
-From **Week 5 onward** we split the work into:
+These are **optional but highly recommended** if you want more intuition for SimCLR/MoCo and contrastive learning:
 
-1. **Shared core tasks** (everyone does these on their primary dataset).
-2. **Extra tasks** (dataset-specific focus, selected via Task Board).
+* **SimCLR (core paper)** – Ting Chen, Simon Kornblith, Mohammad Norouzi, Geoffrey Hinton, *"A Simple Framework for Contrastive Learning of Visual Representations"*, ICML 2020.
 
-This allows us to:
+  * Focus: simple contrastive framework, NT-Xent loss, strong augmentations, projection head, linear probe protocol.
+* **MoCo (core paper)** – Kaiming He, Haoqi Fan, Yuxin Wu, Saining Xie, Ross Girshick, *"Momentum Contrast for Unsupervised Visual Representation Learning"*, CVPR 2020.
 
-* Keep a **clean, comparable core** across Breast/Pneumonia.
-* Avoid duplicated work in deeper analyses.
-* Let people from the larger team help the smaller team.
+  * Focus: memory queue, momentum encoder, contrastive learning without giant batch sizes.
+* **SimCLR code reference (optional)** – `google-research/simclr` GitHub repository.
 
-> **Action item at the start of Week 5:**
->
-> * Open `reports/task_board_week5_7.md`.
-> * Put your name under **1–2 extra tasks** (P-tasks for Pneumonia focus, B-tasks for Breast focus).
-> * If your dataset team is larger, plan for **at least one helper task** on the smaller dataset so that work is balanced.
+  * Focus: see a production-grade implementation (data augs, training loop, linear eval protocol).
+* **Blog-style intros (optional, pick 1)**
 
-### 4.1 Shared Core Tasks (must-do, per person)
+  * SimCLR review (e.g., Medium blog posts explaining the architecture & loss step-by-step).
+  * MoCo explainer articles with diagrams of the queue & momentum encoder.
 
-For **each person (on their primary dataset)**:
+You do **not** have to reproduce these methods exactly. They are mainly to help you:
 
-* **Week 5 core:**
-
-  * Freeze SSL encoder.
-  * Train **linear probes** at **5% and 10%** label fractions.
-  * Compare with supervised-only baseline.
-
-* **Week 6 core:**
-
-  * Unfreeze SSL encoder (small LR) for **fine-tuning**.
-  * Compare **baseline vs SSL-probe vs SSL-finetune** in terms of Acc, AUROC, ECE.
-  * Produce at least **one reliability diagram** for an SSL model.
-
-* **Week 7 core:**
-
-  * Choose at least **one operating point**:
-
-    * e.g., threshold for target TPR (0.9) or target FPR (0.1).
-  * Report metrics at that operating point.
-  * Collect a small set of **high-confidence errors** with commentary.
-
-These core tasks ensure we can always compare Breast vs Pneumonia in a unified way.
-
-### 4.2 Extra Tasks — PneumoniaMNIST Focus
-
-For PneumoniaMNIST (chest X-ray), our extra tasks focus on **calibration, thresholds, and robustness**. Examples of extra task IDs (for Task Board):
-
-* **P1:** Finer label fractions (1%, 2%, 5%, 10%, 20%) + repeated runs (variance).
-* **P2:** Compare **temperature scaling / Platt scaling** vs no calibration (ECE before/after).
-* **P3:** Mini **domain shift** experiments (e.g., brightness/contrast/noise) and measure AUROC/ECE change.
-* **P4:** ROC/PR analysis of **trade-off** between "missing pneumonia" (FN) vs "over-calling pneumonia" (FP).
-* **P5:** High-confidence FP/FN **error gallery** with qualitative discussion.
-
-### 4.3 Extra Tasks — BreastMNIST Focus
-
-For BreastMNIST (breast ultrasound), extra tasks emphasize **label efficiency, augmentation, and representations**:
-
-* **B1:** Label efficiency grid (1%, 5%, 10%) with **2–3 random seeds** to estimate variance.
-* **B2:** t-SNE/UMAP **embedding visualizations** comparing supervised vs SSL representations.
-* **B3:** SSL **augmentation config** ablation (AugA vs AugB) and effects on downstream linear probes.
-* **B4:** "Hard-case" error gallery for **small lesions / low-contrast cases**, with hypotheses.
-* **B5:** Breast-specific **SSL vs no-SSL summary figure/table** for the final report.
-
-Each of these tasks should have **1–2 owners** in `reports/task_board_week5_7.md`.
+* understand *why* we use a projection head;
+* see concrete examples of NT-Xent and InfoNCE-style losses;
+* see how linear probe & fine-tuning are evaluated in the original papers (useful for Weeks 5–7).
 
 ---
 
@@ -989,61 +946,108 @@ Extra task artifacts should be named clearly with the task ID, e.g. `P1_temp_sca
 
 ### Week 8 — Ethics, Limits, and Mini Robustness Test
 
-#### Recommended Reading for Weeks 5–7 (Calibration, ROC/PR, Thresholds)
+> **Theme:** “How and where does this fail?”
 
-These are **reference materials** for:
+Week 8 is **team-based**. Each dataset team completes **3 tasks** (so we don’t duplicate work), and each task should have a **Lead** and a **Reviewer/Runner** داخل the team.
 
-* calibration & reliability diagrams (Week 6),
+**Folder convention (keep it simple):**
 
-* ROC/PR curves & operating points (Week 7),
+```text
+results/week8/<dataset>/<lead_name>/
+```
 
-* understanding how people evaluate models in imbalanced medical settings.
-
-* **Calibration – classic paper**
-  Chuan Guo, Geoff Pleiss, Yu Sun, Kilian Q. Weinberger, *"On Calibration of Modern Neural Networks"*, ICML 2017.
-  → Defines ECE, reliability diagrams, and temperature scaling; shows modern nets are often over-confident.
-
-* **Calibration – modern follow-up (optional)**
-  Minderer et al., *"Revisiting the Calibration of Modern Neural Networks"*, NeurIPS / ICLR-era work.
-  → Looks at how calibration behaves in large-scale, modern architectures and under distribution shift.
-
-* **ROC basics (very useful for medical ML)**
-  Tom Fawcett, *"An Introduction to ROC Analysis"*, Pattern Recognition Letters, 2006.
-  → Clear tutorial on ROC curves, AUC, and common pitfalls; good background for ROC plots in Week 7.
-
-* **ROC vs Precision–Recall**
-  Jesse Davis, Mark Goadrich, *"The Relationship Between Precision-Recall and ROC Curves"*, ICML 2006.
-  → Explains why PR curves can be more informative than ROC when classes are imbalanced (like MedMNIST).
-
-* **(Optional) Practical calibration notes**
-  Lecture notes / blog posts that summarize ECE, reliability diagrams, and Platt/temperature scaling in a more applied way.
-
-When you write Week 6–7 READMEs, you can:
-
-* cite Guo et al. when you mention ECE / temperature scaling;
-* use Fawcett + Davis & Goadrich for ROC/PR plots and threshold discussion.
+Name your files with the task ID prefix (e.g., `P8-1_robustness_table.csv`).
 
 ---
 
-### Week 8 — Ethics, Limits, and Mini Robustness Test
+#### Week 8 — PneumoniaMNIST Team (3 tasks)
 
-> **Theme:** "How and where does this fail?"
+**P8-1 — Mini robustness suite (performance + calibration drift)**
 
-Here, tasks are mostly **shared across datasets**, but you can coordinate via the Task Board if needed.
+* Apply **2–3 mild perturbations** that are plausible for chest X-rays (choose from: slight brightness/contrast shift, light Gaussian noise, mild blur, small crop/resize).
+* Evaluate **baseline vs perturbed** on **test**:
 
-**Everyone** should write a ~1-page note (`reports/week8/<your_name>_ethics_limits.md`) covering:
+  * Acc, AUROC, **ECE**
+  * Report deltas: ΔAcc, ΔAUROC, ΔECE
+* **Definition of Done (DoD):**
 
-* Intended vs non-intended use of a simple MedMNIST classifier.
-* Risks of overfitting, dataset bias, and spurious correlations.
-* How calibration and operating points impact clinical risk.
+  * `P8-1_robustness_table.csv` (or `.md`)
+  * `P8-1_robustness_plot.png` (optional)
+  * `P8-1_notes.md` (6–10 lines: what changed and why)
 
-Optional mini robustness test (per dataset or per team):
+**P8-2 — Calibration under shift (reliability before/after)**
 
-* Simple distribution shifts:
+* Pick **one** perturbation from P8-1 (the one that changed metrics the most).
+* Plot **reliability diagrams** before vs after shift and compare ECE.
+* (Optional) Fit **temperature scaling** on *validation* logits and show whether it helps under shift.
+* **DoD:**
 
-  * e.g., Gaussian noise, contrast change, small cropping.
-* Measure how Acc / AUROC / ECE change.
-* Summarize in a small table or plot.
+  * `P8-2_reliability_before.png`
+  * `P8-2_reliability_after.png`
+  * `P8-2_calibration_shift_note.md` (8–12 lines)
+
+**P8-3 — Clinical risk framing + operating-point stability (1 page)**
+
+* Write a **1-page** note connecting Week 7 operating points to Week 8 robustness:
+
+  * What happens to FP/FN at your chosen threshold after perturbation?
+  * Which failure mode is more risky here (miss pneumonia vs over-call pneumonia)?
+  * What would a “safe deployment” policy look like (e.g., defer-to-human on low confidence / high uncertainty)?
+* **DoD:**
+
+  * `P8-3_ethics_limits_pneumo.md` (≈1 page)
+  * `P8-3_threshold_stability_table.md` (small table: before/after shift at the chosen threshold)
+
+---
+
+#### Week 8 — BreastMNIST Team (3 tasks)
+
+**B8-1 — Mini robustness suite (ultrasound-realistic shifts)**
+
+* Apply **2–3 mild perturbations** plausible for ultrasound (choose from: light speckle-like noise, mild blur, small contrast shift, small crop/resize).
+* Evaluate **baseline vs perturbed** on **test**:
+
+  * Acc, AUROC, **ECE**
+  * Report deltas: ΔAcc, ΔAUROC, ΔECE
+* **DoD:**
+
+  * `B8-1_robustness_table.csv` (or `.md`)
+  * `B8-1_robustness_plot.png` (optional)
+  * `B8-1_notes.md` (6–10 lines)
+
+**B8-2 — Hard-case sensitivity audit (small lesions / low-contrast)**
+
+* Use your Week 7 **high-confidence errors** and check whether the same examples become *more* error-prone under one chosen perturbation.
+* Create a small “before vs after” mini-gallery or table:
+
+  * original prob, shifted prob, correct/incorrect status
+* **DoD:**
+
+  * `B8-2_hardcase_shift_gallery.png` (or `.md` table)
+  * `B8-2_hardcase_shift_note.md` (8–12 lines)
+
+**B8-3 — Ethics/limits note + label-efficiency implications (1 page)**
+
+* Write a **1-page** note focused on BreastMNIST:
+
+  * dataset limitations (benchmark vs clinical reality)
+  * how thresholding + calibration interact with small-data settings
+  * how robustness issues might change conclusions about **label efficiency**
+* **DoD:**
+
+  * `B8-3_ethics_limits_breast.md` (≈1 page)
+
+---
+
+#### Week 8 — References (lightweight, but required)
+
+For **each of the 3 team tasks**, the Lead should attach **≥1 relevant reference** (paper/tutorial/notes) that supports the evaluation idea, saved as:
+
+```text
+reports/references/<task_id>_<shortname>.md
+```
+
+Keep it short (8–12 lines): key idea + how we used it.
 
 ---
 
