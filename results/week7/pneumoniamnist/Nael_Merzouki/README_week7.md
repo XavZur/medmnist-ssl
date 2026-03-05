@@ -1,7 +1,5 @@
 # Week 7: Operating Points, ROC/PR Curves & Error Analysis
 
-**Dataset:** PneumoniaMNIST (Chest X-ray Classification)  
-**Task:** Binary classification (Pneumonia vs. Normal)  
 **Test Set Size:** 1,024 images  
 
 ---
