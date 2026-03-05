@@ -63,21 +63,21 @@
 - 15% fine-tune: +0.0272 accuracy over probe, +0.0338 AUROC
 
 **Fine-Tuning vs Supervised Baseline (at 10% labels):**
-- Accuracy: 0.8814 vs 0.8093 -> **+0.0721 absolute improvement** despite 10x fewer labels
-- AUROC: 0.9524 vs 0.9355 -> **+0.0169 advantage** (fine-tune outperforms supervised)
+- Accuracy: 0.8814 vs 0.8093 -> +0.0721 absolute improvement despite 10x fewer labels
+- AUROC: 0.9524 vs 0.9355 -> +0.0169 advantage (fine-tune outperforms supervised)
 - ECE: 0.3407 vs 0.2663 -> +0.0744 (calibration trade-off for finer-tuned model)
 
 ---
 
 ## 3. Training & Validation Behavior
 
-**Fine-Tuning Effectiveness (5% → 15%):**
+**Fine-Tuning Effectiveness (5-15%):**
 
 As labeled data increased from 235 to 706 samples (+200%), test accuracy improved from 0.8606 to 0.8429, a modest +/-0.0177 change suggesting a slight dip at 12.5% (likely variance) before recovering at 15%. More significantly, AUROC increased from 0.9539 to 0.9546 (+0.0007), demonstrating consistent label efficiency. The 12.5% point deviation (accuracy dips but AUROC rises) suggests the model might be rearranging decision boundaries, hence predictions become better calibrated by AUC metric but produce more classification errors at threshold 0.5.
 
 **Comparison to Week 5 Linear Probe:**
 
-Week 5 achieved 0.9276 AUROC with 10% frozen probe. Week 6 fine-tuning achieves 0.9524 AUROC at 10%, a **+0.0248 gain (+2.48 points)** by unfreezing the encoder with small learning rates. This validates the hypothesis that the encoder has adaptation capacity beyond the linear probe limit. Accuracy gap between Week 5 probe (0.7933) and Week 6 probe (0.8189) is +0.0256 (likely variance from week 6 and week 5's implementation or dataset split).
+Week 5 achieved 0.9276 AUROC with 10% frozen probe. Week 6 fine-tuning achieves 0.9524 AUROC at 10%, a +0.0248 gain (+2.48 points) by unfreezing the encoder with small learning rates. This validates the hypothesis that the encoder has adaptation capacity beyond the linear probe limit. Accuracy gap between Week 5 probe (0.7933) and Week 6 probe (0.8189) is +0.0256 (likely variance from week 6 and week 5's implementation or dataset split).
 
 **Fine-Tuning with Differential Learning Rates:**
 
@@ -105,7 +105,7 @@ ECE increases from probe to fine-tune (e.g., 0.2269 -> 0.3428 at 5%), suggesting
 | Supervised (100%) | 100% | 0.2663 | Moderate |
 
 **Insight:** 
-- Fine-tuned models are **over-confident** (~0.34 ECE), predicting high probability for both correct and incorrect examples.
+- Fine-tuned models are over-confident (~0.34 ECE), predicting high probability for both correct and incorrect examples.
 - Frozen probe models maintain better calibration (~0.23 ECE), possibly because the single trainable linear layer remains constrained.
 - Supervised baseline, despite full access to all training data, still shows moderate miscalibration (0.2663), suggesting class imbalance and neural network architecture inherently produce overconfident posteriors.
 
@@ -124,7 +124,7 @@ ECE increases from probe to fine-tune (e.g., 0.2269 -> 0.3428 at 5%), suggesting
 
 - **Calibration Trade-off:** ECE increases 0.076 from probe (0.2329) to fine-tune (0.3407), reflecting the well-known phenomenon that higher-capacity models become more overconfident. The trade-off is worthwhile for accuracy gain (+6.25%), solvable via calibration techniques (temperature scaling, Platt scaling).
 
-- **Label Fraction Effect (5%, 10%, 12%, 15%):** 
+- **Label Fraction Effect (5%, 10%, 12.5%, 15%):** 
   - 5% to 10%: +0.0208 accuracy gain (diminishing returns visible)
   - 10% to 15%: −0.0385 accuracy (regression), likely noise or stochastic effects
   - AUROC stability suggests predictions remain well-separated despite accuracy fluctuations at threshold 0.5
