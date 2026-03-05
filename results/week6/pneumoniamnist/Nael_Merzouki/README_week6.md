@@ -100,9 +100,9 @@ ECE increases from probe to fine-tune (e.g., 0.2269 -> 0.3428 at 5%), suggesting
 
 | Model | Label % | ECE | Classification |
 |-------|---------|-----|-----------------|
-| SSL Probe (10%) | 10% | 0.2329 | Better calibrated |
-| SSL FineTune (10%) | 10% | 0.3407 | Over-confident |
-| Supervised (100%) | 100% | 0.2663 | Moderate |
+| SSL Probe | 10% | 0.2329 | Better calibrated |
+| SSL FineTune | 10% | 0.3407 | Over-confident |
+| Supervised | 100% | 0.2663 | Moderate |
 
 **Insight:** 
 - Fine-tuned models are over-confident (~0.34 ECE), predicting high probability for both correct and incorrect examples.
