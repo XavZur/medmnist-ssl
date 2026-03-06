@@ -35,9 +35,9 @@ Loss: CrossEntropyLoss
 **Linear Probe Performance**
 | Label Fraction | Accuracy | Balanced Accuracy | AUROC | Best Threshold|
 | -------------- | -------- | ----------------- | ----- | -------------- |
-| 5%             | 0.622   | 0.651             | 0.717 | 0.633 |
-| 10%            | 0.686   | 0.650           | 0.726 | 0.523 |
-| 20%            | 0.679   | 0.653           | 0.789 | 0.412 |
+| 5%             | 0.583   | 0.632             | 0.707 | 0.618 |
+| 10%            | 0.647   | 0.668           | 0.720 | 0.608 |
+| 20%            | 0.730   | 0.710           | 0.782 | 0.452 |
 
 **Supervised Baselines**
 | Model Type                         | Accuracy | Balanced Accuracy | AUROC |
@@ -46,7 +46,7 @@ Loss: CrossEntropyLoss
 
 
 ## Analysis  
-The linear probe results indicate that the SSL-pretrained encoder learns features that are meaningfully descriminative even under severe label scarcity. With only 5–10% labeled data, AUROC remains above 0.71 and improves to 0.79 at 20%, suggesting that the representation captures some class-separable structure independent of the linear head. Notably, the balanced accuracy score remains relatively stable (~0.65) across 5–20%, despite increasing overall accuracy. This suggests that gains from additional labeled data primarily improve confidence calibration and threshold positioning rather than substantially improving minority-class discrimination. The rising AUROC with 20% labels further supports that the learned representation contains useful ranking information, even if the default decision boundary is suboptimal.
+The linear probe results suggest that the SSL-pretrained encoder learns representations containing useful class information even with limited labeled data. As the labeled fraction increases from 5% to 20%, accuracy and AUROC both improve, indicating that the linear classifier can better separate the learned features with additional supervision. AUROC rises from 0.707 to 0.775, showing the encoder captures meaningful ranking information between classes despite being trained without labels. Balanced accuracy improves slightly, reflecting modest gains across both classes despite the dataset imbalance.
 
-However, there remains a significant performance gap compared to the fully supervised model trained on 100% labels (AUROC 0.928 vs 0.789 at best). This gap highlights key limitations, firtly that freezing the encoder constrains adaptation to the downstream distribution, and secondly the linear head alone may lack sufficient capacity to exploit nonlinear separability in the feature space. Finaly, the results suggest that the SSL encoder provides a transferable starting point, but fine-tuning the encoder is likely necessary to approach fully supervised performance.
+However, a substantial gap remains between the SSL probe and the fully supervised baseline. The supervised model achieves much higher performance, which is expected since its encoder is trained directly for the classification task. Because the linear probe restricts learning to a simple linear boundary in a frozen feature space, it cannot fully adapt to the dataset. These results suggest the SSL encoder provides a useful representation, but that further improvements likely require fine-tuning the encoder.
 
